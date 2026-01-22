@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNIBEN AWARDS DP/Flyer Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 40px;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .input-group input[type="text"] {
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: #f5f5f5;
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .file-input-label:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .file-name {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: #34c759;
+            color: white;
+            box-shadow: 0 4px 15px rgba(52, 199, 89, 0.4);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 199, 89, 0.6);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .canvas-wrapper {
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 1;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background: #f0f0f0;
+        }
+
+        #canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .status {
+            padding: 10px 20px;
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            border-radius: 5px;
+            color: #1976D2;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            background: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .footer p {
+            color: #666;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .footer strong {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .canvas-wrapper {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                border-radius: 0;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 UNIBEN AWARDS DP/Flyer Generator</h1>
+            <p>Create your personalized Nomination flyer in seconds</p>
+        </div>
+
+        <div class="main-content">
+            <div class="controls">
+                <div class="input-group">
+                    <label for="templateUpload">Upload Flyer Template (PNG)</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="templateUpload" accept="image/png,image/jpeg,image/jpg">
+                        <label for="templateUpload" class="file-input-label">
+                            <span>🖼️</span>
+                            <span>Choose Template</span>
+                        </label>
+                    </div>
+                    <div class="file-name" id="templateFileName">No template selected</div>
+                </div>
+
+                <div class="input-group">
+                    <label for="photoUpload">Upload Your Selfie Photo</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="photoUpload" accept="image/*">
+                        <label for="photoUpload" class="file-input-label">
+                            <span>📸</span>
+                            <span>Choose Photo</span>
+                        </label>
+                    </div>
+                    <div class="file-name" id="fileName">No file selected</div>
+                </div>
+
+                <div class="input-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" placeholder="John Doe" value="John Doe">
+                </div>
+
+                <div class="input-group">
+                    <label for="jobTitle">Nomination Category</label>
+                    <input type="text" id="jobTitle" placeholder="Senior Marketing Manager" value="Senior Marketing Manager">
+                </div>
+
+                <div class="input-group">
+                    <label for="quote">Faculty</label>
+                    <input type="text" id="quote" placeholder="Dream Big, Work Hard" value="Dream Big, Work Hard">
+                </div>
+
+                <button class="btn btn-primary" id="generateBtn">Generate DP</button>
+                <button class="btn btn-secondary" id="downloadBtn" disabled>Download Image</button>
+                
+                <div class="status" id="status" style="display: none;"></div>
+            </div>
+
+            <div class="preview">
+                <div class="canvas-wrapper">
+                    <canvas id="canvas" width="1080" height="1080"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Built by <strong>Adisaac Tech Innovations Ltd</strong></p>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const CONFIG = {
+            canvasSize: 1080,
+            
+            userPhoto: {
+                x: 540,
+                y: 450,
+                radius: 150,
+                borderWidth: 8,
+                borderColor: '#ffffff'
+            },
+            
+            text: {
+                name: {
+                    y: 680,
+                    fontSize: 60,
+                    fontWeight: 'bold',
+                    color: '#ffffff',
+                    maxWidth: 900
+                },
+                role: {
+                    y: 760,
+                    fontSize: 36,
+                    fontWeight: 'normal',
+                    color: '#f0f0f0',
+                    maxWidth: 900
+                },
+                quote: {
+                    y: 820,
+                    fontSize: 32,
+                    fontWeight: 'normal',
+                    style: 'italic',
+                    color: '#ffffff',
+                    maxWidth: 950
+                }
+            }
+        };
+
+        // DOM Elements
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const templateUpload = document.getElementById('templateUpload');
+        const templateFileName = document.getElementById('templateFileName');
+        const photoUpload = document.getElementById('photoUpload');
+        const fileName = document.getElementById('fileName');
+        const fullNameInput = document.getElementById('fullName');
+        const jobTitleInput = document.getElementById('jobTitle');
+        const quoteInput = document.getElementById('quote');
+        const generateBtn = document.getElementById('generateBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const statusDiv = document.getElementById('status');
+
+        // State
+        let baseImage = null;
+        let userImage = null;
+        let isGenerated = false;
+
+        // Show status message
+        function showStatus(message, type = 'info') {
+            statusDiv.textContent = message;
+            statusDiv.style.display = 'block';
+            statusDiv.style.background = type === 'success' ? '#e8f5e9' : '#e3f2fd';
+            statusDiv.style.borderColor = type === 'success' ? '#4CAF50' : '#2196F3';
+            statusDiv.style.color = type === 'success' ? '#2E7D32' : '#1976D2';
+        }
+
+        // Create base template image
+        function createBaseImage() {
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = CONFIG.canvasSize;
+            tempCanvas.height = CONFIG.canvasSize;
+            const tempCtx = tempCanvas.getContext('2d');
+
+            // Gradient background
+            const gradient = tempCtx.createLinearGradient(0, 0, CONFIG.canvasSize, CONFIG.canvasSize);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+            tempCtx.fillStyle = gradient;
+            tempCtx.fillRect(0, 0, CONFIG.canvasSize, CONFIG.canvasSize);
+
+            // Decorative elements
+            tempCtx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            tempCtx.beginPath();
+            tempCtx.arc(100, 100, 200, 0, Math.PI * 2);
+            tempCtx.fill();
+            
+            tempCtx.beginPath();
+            tempCtx.arc(CONFIG.canvasSize - 100, CONFIG.canvasSize - 100, 250, 0, Math.PI * 2);
+            tempCtx.fill();
+
+            // Title text
+            tempCtx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            tempCtx.font = 'bold 48px Arial';
+            tempCtx.textAlign = 'center';
+            tempCtx.fillText('MARKETING FLYER', CONFIG.canvasSize / 2, 120);
+
+            baseImage = new Image();
+            baseImage.crossOrigin = 'anonymous';
+            baseImage.src = 'YOUR_IMAGE_URL_HERE';
+            baseImage.onload = function() {
+                drawCanvas();
+                showStatus('Template loaded successfully!', 'success');
+            };
+            baseImage.onerror = function() {
+                // Fallback to generated template if URL fails
+                baseImage.src = tempCanvas.toDataURL();
+            };
+        }
+
+        // Template upload handler
+        templateUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (!file.type.match('image.*')) {
+                    showStatus('Please select a valid image file');
+                    return;
+                }
+
+                templateFileName.textContent = file.name;
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    baseImage = new Image();
+                    baseImage.onload = function() {
+                        drawCanvas();
+                        showStatus('Template uploaded successfully!', 'success');
+                    };
+                    baseImage.onerror = function() {
+                        showStatus('Error loading template. Please try another file.');
+                        createBaseImage(); // Fallback to default
+                    };
+                    baseImage.src = event.target.result;
+                };
+                
+                reader.onerror = function() {
+                    showStatus('Error reading file. Please try again.');
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // File upload handler
+        photoUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (!file.type.match('image.*')) {
+                    showStatus('Please select a valid image file');
+                    return;
+                }
+
+                fileName.textContent = file.name;
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    userImage = new Image();
+                    userImage.onload = function() {
+                        drawCanvas();
+                        showStatus('Photo uploaded successfully!', 'success');
+                    };
+                    userImage.onerror = function() {
+                        showStatus('Error loading image. Please try another file.');
+                        userImage = null;
+                    };
+                    userImage.src = event.target.result;
+                };
+                
+                reader.onerror = function() {
+                    showStatus('Error reading file. Please try again.');
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Generate button
+        generateBtn.addEventListener('click', function() {
+            drawCanvas();
+            isGenerated = true;
+            downloadBtn.disabled = false;
+            showStatus('Flyer generated successfully!', 'success');
+        });
+
+        // Download button
+        downloadBtn.addEventListener('click', function() {
+            try {
+                const link = document.createElement('a');
+                const timestamp = new Date().getTime();
+                link.download = 'flyer_' + timestamp + '.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showStatus('Image downloaded successfully!', 'success');
+            } catch (error) {
+                showStatus('Error downloading image. Please try again.');
+            }
+        });
+
+        // Draw canvas
+        function drawCanvas() {
+            try {
+                // Clear canvas
+                ctx.clearRect(0, 0, CONFIG.canvasSize, CONFIG.canvasSize);
+
+                // Draw base image
+                if (baseImage && baseImage.complete) {
+                    ctx.drawImage(baseImage, 0, 0, CONFIG.canvasSize, CONFIG.canvasSize);
+                }
+
+                // Draw user photo
+                if (userImage && userImage.complete) {
+                    drawCircularImage(
+                        userImage,
+                        CONFIG.userPhoto.x,
+                        CONFIG.userPhoto.y,
+                        CONFIG.userPhoto.radius
+                    );
+                }
+
+                // Draw texts
+                drawText(
+                    fullNameInput.value || 'Your Name',
+                    CONFIG.text.name
+                );
+
+                drawText(
+                    jobTitleInput.value || 'Your Role',
+                    CONFIG.text.role
+                );
+
+                drawText(
+                    quoteInput.value || 'Your Quote',
+                    CONFIG.text.quote
+                );
+            } catch (error) {
+                console.error('Error drawing canvas:', error);
+                showStatus('Error generating flyer. Please refresh and try again.');
+            }
+        }
+
+        // Draw circular image
+        function drawCircularImage(img, x, y, radius) {
+            ctx.save();
+
+            // Border
+            ctx.beginPath();
+            ctx.arc(x, y, radius + CONFIG.userPhoto.borderWidth, 0, Math.PI * 2);
+            ctx.fillStyle = CONFIG.userPhoto.borderColor;
+            ctx.fill();
+
+            // Clip circle
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.clip();
+
+            // Scale image
+            const scale = Math.max(
+                (radius * 2) / img.width,
+                (radius * 2) / img.height
+            );
+
+            const scaledWidth = img.width * scale;
+            const scaledHeight = img.height * scale;
+
+            // Draw centered
+            ctx.drawImage(
+                img,
+                x - scaledWidth / 2,
+                y - scaledHeight / 2,
+                scaledWidth,
+                scaledHeight
+            );
+
+            ctx.restore();
+        }
+
+        // Draw text with wrapping
+        function drawText(text, config) {
+            ctx.save();
+            
+            const fontStyle = config.style || '';
+            const font = fontStyle + ' ' + config.fontWeight + ' ' + config.fontSize + 'px Arial, sans-serif';
+            ctx.font = font;
+            ctx.fillStyle = config.color;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // Shadow
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+            ctx.shadowBlur = 10;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+
+            // Word wrap
+            const words = text.split(' ');
+            let line = '';
+            let y = config.y;
+            const lineHeight = config.fontSize * 1.2;
+
+            for (let i = 0; i < words.length; i++) {
+                const testLine = line + words[i] + ' ';
+                const metrics = ctx.measureText(testLine);
+
+                if (metrics.width > config.maxWidth && i > 0) {
+                    ctx.fillText(line, CONFIG.canvasSize / 2, y);
+                    line = words[i] + ' ';
+                    y += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.fillText(line, CONFIG.canvasSize / 2, y);
+
+            ctx.restore();
+        }
+
+        // Real-time preview
+        [fullNameInput, jobTitleInput, quoteInput].forEach(function(input) {
+            input.addEventListener('input', function() {
+                if (isGenerated || userImage || baseImage) {
+                    drawCanvas();
+                }
+            });
+        });
+
+        // Initialize
+        createBaseImage();
+    </script>
+</body>
+</html>
