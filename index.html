@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create your personalized UNIBEN Awards nomination flyer in seconds with this easy-to-use generator.">
+    <meta name="theme-color" content="#667eea">
     <title>UNIBEN AWARDS DP/Flyer Generator</title>
     <style>
         * {
@@ -52,6 +54,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
+            margin-top: 80px;
             padding: 40px;
         }
 
@@ -196,6 +199,24 @@
             border-radius: 5px;
             color: #1976D2;
             font-size: 0.9rem;
+            animation: slideInUp 0.3s ease-out;
+        }
+        
+        .status.success {
+            background: #e8f5e9;
+            border-left-color: #4CAF50;
+            color: #2E7D32;
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .footer {
@@ -266,6 +287,8 @@
                     <div class="file-name" id="templateFileName">No template selected</div>
                 </div>
 
+                <button class="btn btn-secondary" id="loadDefaultBtn">Load Default Template</button>
+
                 <div class="input-group">
                     <label for="photoUpload">Upload Your Selfie Photo</label>
                     <div class="file-input-wrapper">
@@ -280,17 +303,17 @@
 
                 <div class="input-group">
                     <label for="fullName">Full Name</label>
-                    <input type="text" id="fullName" placeholder="John Doe" value="John Doe">
+                    <input type="text" id="fullName" placeholder="e.g., Dr. Adisa Isaac" value="">
                 </div>
 
                 <div class="input-group">
                     <label for="jobTitle">Nomination Category</label>
-                    <input type="text" id="jobTitle" placeholder="Senior Marketing Manager" value="Senior Marketing Manager">
+                    <input type="text" id="jobTitle" placeholder="e.g., Best Lecturer of the Year" value="">
                 </div>
 
                 <div class="input-group">
-                    <label for="quote">Faculty</label>
-                    <input type="text" id="quote" placeholder="Dream Big, Work Hard" value="Dream Big, Work Hard">
+                    <label for="quote">Faculty/Department</label>
+                    <input type="text" id="quote" placeholder="e.g., Faculty of Engineering" value="">
                 </div>
 
                 <button class="btn btn-primary" id="generateBtn">Generate DP</button>
@@ -318,33 +341,33 @@
             
             userPhoto: {
                 x: 540,
-                y: 450,
-                radius: 150,
-                borderWidth: 8,
-                borderColor: '#ffffff'
+                y: 580,
+                radius: 160,
+                borderWidth: 12,
+                borderColor: '#FFD700'
             },
             
             text: {
                 name: {
-                    y: 680,
-                    fontSize: 60,
+                    y: 820,
+                    fontSize: 72,
                     fontWeight: 'bold',
-                    color: '#ffffff',
+                    color: '#FFD700',
                     maxWidth: 900
                 },
                 role: {
-                    y: 760,
-                    fontSize: 36,
-                    fontWeight: 'normal',
-                    color: '#f0f0f0',
+                    y: 920,
+                    fontSize: 42,
+                    fontWeight: '600',
+                    color: '#ffffff',
                     maxWidth: 900
                 },
                 quote: {
-                    y: 820,
-                    fontSize: 32,
-                    fontWeight: 'normal',
+                    y: 1000,
+                    fontSize: 38,
+                    fontWeight: '500',
                     style: 'italic',
-                    color: '#ffffff',
+                    color: '#F5F5F5',
                     maxWidth: 950
                 }
             }
@@ -362,6 +385,7 @@
         const quoteInput = document.getElementById('quote');
         const generateBtn = document.getElementById('generateBtn');
         const downloadBtn = document.getElementById('downloadBtn');
+        const loadDefaultBtn = document.getElementById('loadDefaultBtn');
         const statusDiv = document.getElementById('status');
 
         // State
@@ -373,9 +397,7 @@
         function showStatus(message, type = 'info') {
             statusDiv.textContent = message;
             statusDiv.style.display = 'block';
-            statusDiv.style.background = type === 'success' ? '#e8f5e9' : '#e3f2fd';
-            statusDiv.style.borderColor = type === 'success' ? '#4CAF50' : '#2196F3';
-            statusDiv.style.color = type === 'success' ? '#2E7D32' : '#1976D2';
+            statusDiv.className = 'status' + (type === 'success' ? ' success' : '');
         }
 
         // Create base template image
@@ -388,36 +410,33 @@
             // Gradient background
             const gradient = tempCtx.createLinearGradient(0, 0, CONFIG.canvasSize, CONFIG.canvasSize);
             gradient.addColorStop(0, '#667eea');
-            gradient.addColorStop(1, '#764ba2');
+            gradient.addColorStop(0.5, '#764ba2');
+            gradient.addColorStop(1, '#f093fb');
             tempCtx.fillStyle = gradient;
             tempCtx.fillRect(0, 0, CONFIG.canvasSize, CONFIG.canvasSize);
 
             // Decorative elements
             tempCtx.fillStyle = 'rgba(255, 255, 255, 0.1)';
             tempCtx.beginPath();
-            tempCtx.arc(100, 100, 200, 0, Math.PI * 2);
+            tempCtx.arc(150, 150, 250, 0, Math.PI * 2);
             tempCtx.fill();
             
             tempCtx.beginPath();
-            tempCtx.arc(CONFIG.canvasSize - 100, CONFIG.canvasSize - 100, 250, 0, Math.PI * 2);
+            tempCtx.arc(CONFIG.canvasSize - 150, CONFIG.canvasSize - 150, 300, 0, Math.PI * 2);
             tempCtx.fill();
 
             // Title text
-            tempCtx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-            tempCtx.font = 'bold 48px Arial';
+            tempCtx.fillStyle = 'rgba(255, 215, 0, 0.2)';
+            tempCtx.font = 'bold 60px Georgia';
             tempCtx.textAlign = 'center';
-            tempCtx.fillText('MARKETING FLYER', CONFIG.canvasSize / 2, 120);
+            tempCtx.fillText('UNIBEN AWARDS', CONFIG.canvasSize / 2, 150);
 
             baseImage = new Image();
             baseImage.crossOrigin = 'anonymous';
-            baseImage.src = 'YOUR_IMAGE_URL_HERE';
+            baseImage.src = tempCanvas.toDataURL();
             baseImage.onload = function() {
                 drawCanvas();
                 showStatus('Template loaded successfully!', 'success');
-            };
-            baseImage.onerror = function() {
-                // Fallback to generated template if URL fails
-                baseImage.src = tempCanvas.toDataURL();
             };
         }
 
@@ -426,7 +445,7 @@
             const file = e.target.files[0];
             if (file) {
                 if (!file.type.match('image.*')) {
-                    showStatus('Please select a valid image file');
+                    showStatus('Please select a valid image file ❌');
                     return;
                 }
 
@@ -437,17 +456,17 @@
                     baseImage = new Image();
                     baseImage.onload = function() {
                         drawCanvas();
-                        showStatus('Template uploaded successfully!', 'success');
+                        showStatus('Template uploaded successfully! 🎉', 'success');
                     };
                     baseImage.onerror = function() {
-                        showStatus('Error loading template. Please try another file.');
-                        createBaseImage(); // Fallback to default
+                        showStatus('Error loading template. Please try another file. ❌');
+                        createBaseImage();
                     };
                     baseImage.src = event.target.result;
                 };
                 
                 reader.onerror = function() {
-                    showStatus('Error reading file. Please try again.');
+                    showStatus('Error reading file. Please try again. ❌');
                 };
                 
                 reader.readAsDataURL(file);
@@ -459,7 +478,7 @@
             const file = e.target.files[0];
             if (file) {
                 if (!file.type.match('image.*')) {
-                    showStatus('Please select a valid image file');
+                    showStatus('Please select a valid image file ❌');
                     return;
                 }
 
@@ -470,17 +489,17 @@
                     userImage = new Image();
                     userImage.onload = function() {
                         drawCanvas();
-                        showStatus('Photo uploaded successfully!', 'success');
+                        showStatus('Photo uploaded successfully! 📸✨', 'success');
                     };
                     userImage.onerror = function() {
-                        showStatus('Error loading image. Please try another file.');
+                        showStatus('Error loading image. Please try another file. ❌');
                         userImage = null;
                     };
                     userImage.src = event.target.result;
                 };
                 
                 reader.onerror = function() {
-                    showStatus('Error reading file. Please try again.');
+                    showStatus('Error reading file. Please try again. ❌');
                 };
                 
                 reader.readAsDataURL(file);
@@ -492,7 +511,7 @@
             drawCanvas();
             isGenerated = true;
             downloadBtn.disabled = false;
-            showStatus('Flyer generated successfully!', 'success');
+            showStatus('Flyer generated successfully! 🎨🔥', 'success');
         });
 
         // Download button
@@ -500,13 +519,28 @@
             try {
                 const link = document.createElement('a');
                 const timestamp = new Date().getTime();
-                link.download = 'flyer_' + timestamp + '.png';
+                link.download = 'uniben_award_nomination_' + timestamp + '.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-                showStatus('Image downloaded successfully!', 'success');
+                showStatus('Image downloaded successfully! 💾✅', 'success');
             } catch (error) {
-                showStatus('Error downloading image. Please try again.');
+                showStatus('Error downloading image. Please try again. ❌');
             }
+        });
+
+        // Load default template
+        loadDefaultBtn.addEventListener('click', function() {
+            baseImage = new Image();
+            baseImage.onload = function() {
+                drawCanvas();
+                showStatus('Default template loaded! 🎉', 'success');
+            };
+            baseImage.onerror = function() {
+                showStatus('Error loading template. ❌');
+                createBaseImage();
+            };
+            baseImage.src = 'default-template.jpg';
+            templateFileName.textContent = 'default-template.jpg';
         });
 
         // Draw canvas
@@ -542,12 +576,12 @@
                 );
 
                 drawText(
-                    quoteInput.value || 'Your Quote',
+                    quoteInput.value || 'Your Faculty',
                     CONFIG.text.quote
                 );
             } catch (error) {
                 console.error('Error drawing canvas:', error);
-                showStatus('Error generating flyer. Please refresh and try again.');
+                showStatus('Error generating flyer. Please refresh and try again. ❌');
             }
         }
 
@@ -593,23 +627,23 @@
             ctx.save();
             
             const fontStyle = config.style || '';
-            const font = fontStyle + ' ' + config.fontWeight + ' ' + config.fontSize + 'px Arial, sans-serif';
+            const font = fontStyle + ' ' + config.fontWeight + ' ' + config.fontSize + 'px Georgia, "Times New Roman", serif';
             ctx.font = font;
             ctx.fillStyle = config.color;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
-            // Shadow
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-            ctx.shadowBlur = 10;
-            ctx.shadowOffsetX = 2;
-            ctx.shadowOffsetY = 2;
+            // Enhanced shadow for award look
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+            ctx.shadowBlur = 15;
+            ctx.shadowOffsetX = 3;
+            ctx.shadowOffsetY = 3;
 
             // Word wrap
             const words = text.split(' ');
             let line = '';
             let y = config.y;
-            const lineHeight = config.fontSize * 1.2;
+            const lineHeight = config.fontSize * 1.3;
 
             for (let i = 0; i < words.length; i++) {
                 const testLine = line + words[i] + ' ';
