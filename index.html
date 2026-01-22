@@ -3,14 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Create your personalized UNIBEN Awards nomination flyer in seconds with this easy-to-use generator.">
-    <meta name="theme-color" content="#667eea">
     <title>UNIBEN AWARDS DP/Flyer Generator</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         body {
@@ -21,74 +30,131 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
+            overflow-x: hidden;
         }
 
         .container {
             max-width: 1200px;
             width: 100%;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3), 
+                        0 0 0 1px rgba(255, 255, 255, 0.3) inset;
             overflow: hidden;
+            position: relative;
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
             color: white;
-            padding: 30px;
+            padding: 40px 30px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
         .header h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 10px;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: #FFD700;
+            position: relative;
+            z-index: 1;
         }
 
         .header p {
-            font-size: 0.95rem;
-            opacity: 0.9;
+            font-size: 1.1rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
         }
 
         .main-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
+            gap: 40px;
             margin-top: 80px;
-            padding: 40px;
+            padding: 50px 40px;
         }
 
         .controls {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 25px;
         }
 
         .input-group {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
 
         .input-group label {
-            font-weight: 600;
+            font-weight: 700;
             color: #333;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .input-group input[type="text"] {
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
+        .input-group input[type="text"],
+        .input-group input[type="number"],
+        .input-group input[type="range"] {
+            padding: 14px 18px;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
             font-family: inherit;
             font-size: 1rem;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            background: white;
         }
 
-        .input-group input[type="text"]:focus {
+        .input-group input[type="text"]:focus,
+        .input-group input[type="number"]:focus {
             outline: none;
             border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 5px rgba(102, 126, 234, 0.15),
+                        0 10px 30px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .input-group input[type="range"] {
+            padding: 0;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border: none;
+        }
+
+        .input-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #FFD700;
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .input-group input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: #FFD700;
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            border: none;
+        }
+
+        .slider-value {
+            font-size: 0.9rem;
+            color: #667eea;
+            font-weight: 600;
         }
 
         .file-input-wrapper {
@@ -107,143 +173,171 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            padding: 12px 16px;
-            background: #f5f5f5;
-            border: 2px dashed #667eea;
-            border-radius: 10px;
+            gap: 12px;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
+            border: 3px dashed #667eea;
+            border-radius: 15px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-weight: 600;
+            font-weight: 700;
             color: #667eea;
         }
 
         .file-input-label:hover {
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            border-color: transparent;
+        }
+
+        .file-input-label span:first-child {
+            font-size: 1.5rem;
         }
 
         .file-name {
             font-size: 0.85rem;
             color: #666;
-            margin-top: 5px;
+            margin-top: 8px;
+            font-style: italic;
         }
 
         .btn {
-            padding: 14px 28px;
+            padding: 16px 32px;
             border: none;
-            border-radius: 10px;
+            border-radius: 15px;
             font-family: inherit;
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 1.05rem;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
         }
 
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
         }
 
         .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
         }
 
         .btn-secondary {
-            background: #34c759;
+            background: linear-gradient(135deg, #34c759, #2ecc71);
             color: white;
-            box-shadow: 0 4px 15px rgba(52, 199, 89, 0.4);
+            box-shadow: 0 6px 25px rgba(52, 199, 89, 0.4);
         }
 
         .btn-secondary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(52, 199, 89, 0.6);
+            box-shadow: 0 8px 30px rgba(52, 199, 89, 0.6);
         }
 
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            transform: none !important;
         }
 
         .preview {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 25px;
         }
 
         .canvas-wrapper {
             width: 100%;
             max-width: 500px;
-            aspect-ratio: 1;
-            border-radius: 15px;
+            aspect-ratio: 1054/1280;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            background: #f0f0f0;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3),
+                        0 0 0 1px rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+            transition: all 0.3s ease;
+        }
+
+        .canvas-wrapper:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
         }
 
         #canvas {
             width: 100%;
             height: 100%;
             display: block;
+            position: relative;
+            z-index: 1;
         }
 
         .status {
-            padding: 10px 20px;
-            background: #e3f2fd;
-            border-left: 4px solid #2196F3;
-            border-radius: 5px;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-left: 5px solid #2196F3;
+            border-radius: 10px;
             color: #1976D2;
-            font-size: 0.9rem;
-            animation: slideInUp 0.3s ease-out;
+            font-size: 0.95rem;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.2);
+            animation: fadeInUp 0.5s ease-out;
         }
-        
+
         .status.success {
-            background: #e8f5e9;
-            border-left-color: #4CAF50;
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border-color: #4CAF50;
             color: #2E7D32;
-        }
-        
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         .footer {
-            background: #f5f5f5;
-            padding: 20px;
+            background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
+            padding: 30px;
             text-align: center;
-            border-top: 1px solid #e0e0e0;
+            border-top: 3px solid #e0e0e0;
+            position: relative;
         }
 
         .footer p {
             color: #666;
-            font-size: 0.9rem;
+            font-size: 1rem;
             margin: 0;
         }
 
         .footer strong {
             color: #667eea;
-            font-weight: 600;
+            font-weight: 800;
+        }
+
+        .photo-controls {
+            display: none;
+            gap: 15px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f0f0f0, #e8e8e8);
+            border-radius: 15px;
+            margin-top: 10px;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .photo-controls.active {
+            display: flex;
+            flex-direction: column;
         }
 
         @media (max-width: 968px) {
             .main-content {
                 grid-template-columns: 1fr;
+                gap: 30px;
             }
 
             .header h1 {
-                font-size: 1.5rem;
+                font-size: 1.8rem;
             }
 
             .canvas-wrapper {
@@ -257,11 +351,15 @@
             }
 
             .main-content {
-                padding: 20px;
+                padding: 30px 20px;
             }
 
             .header {
-                padding: 20px;
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
             }
         }
     </style>
@@ -269,8 +367,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎨 UNIBEN AWARDS DP/Flyer Generator</h1>
-            <p>Create your personalized Nomination flyer in seconds</p>
+            <h1><span>🎨</span> UNIBEN AWARDS DP/Flyer Generator</h1>
+            <p>Create your personalized Nomination flyer in seconds <span>✨</span></p>
         </div>
 
         <div class="main-content">
@@ -287,7 +385,7 @@
                     <div class="file-name" id="templateFileName">No template selected</div>
                 </div>
 
-                <button class="btn btn-secondary" id="loadDefaultBtn">Load Default Template</button>
+                <button class="btn btn-secondary" id="loadDefaultBtn"><span>📥 Load Default Template</span></button>
 
                 <div class="input-group">
                     <label for="photoUpload">Upload Your Selfie Photo</label>
@@ -299,6 +397,22 @@
                         </label>
                     </div>
                     <div class="file-name" id="fileName">No file selected</div>
+                </div>
+
+                <div class="photo-controls" id="photoControls">
+                    <div class="input-group">
+                        <label>Zoom: <span class="slider-value" id="zoomValue">1.0</span></label>
+                        <input type="range" id="zoomSlider" min="0.5" max="3" step="0.1" value="1">
+                    </div>
+                    <div class="input-group">
+                        <label>Horizontal Position: <span class="slider-value" id="posXValue">0</span></label>
+                        <input type="range" id="posXSlider" min="-300" max="300" step="5" value="0">
+                    </div>
+                    <div class="input-group">
+                        <label>Vertical Position: <span class="slider-value" id="posYValue">0</span></label>
+                        <input type="range" id="posYSlider" min="-300" max="300" step="5" value="0">
+                    </div>
+                    <button class="btn btn-primary" id="resetPhotoBtn" style="padding: 10px 20px; font-size: 0.9rem;"><span>🔄 Reset Position</span></button>
                 </div>
 
                 <div class="input-group">
@@ -316,54 +430,58 @@
                     <input type="text" id="quote" placeholder="e.g., Faculty of Engineering" value="">
                 </div>
 
-                <button class="btn btn-primary" id="generateBtn">Generate DP</button>
-                <button class="btn btn-secondary" id="downloadBtn" disabled>Download Image</button>
+                <button class="btn btn-primary" id="generateBtn"><span>🚀 Generate DP</span></button>
+                <button class="btn btn-secondary" id="downloadBtn" disabled><span>💾 Download Image</span></button>
                 
                 <div class="status" id="status" style="display: none;"></div>
             </div>
 
             <div class="preview">
                 <div class="canvas-wrapper">
-                    <canvas id="canvas" width="1080" height="1080"></canvas>
+                    <canvas id="canvas" width="1054" height="1280"></canvas>
                 </div>
             </div>
         </div>
 
         <div class="footer">
-            <p>Built by <strong>Adisaac Tech Innovations Ltd</strong></p>
+            <p>Built with 💜 by <strong>Adisaac Tech Innovations Ltd</strong></p>
         </div>
     </div>
 
     <script>
         // Configuration
         const CONFIG = {
-            canvasSize: 1080,
+            canvasWidth: 1054,
+            canvasHeight: 1280,
             
             userPhoto: {
-                x: 540,
-                y: 580,
+                x: 527,
+                y: 645,
                 radius: 160,
                 borderWidth: 12,
-                borderColor: '#FFD700'
+                borderColor: '#FFD700',
+                zoom: 1,
+                offsetX: 0,
+                offsetY: 0
             },
             
             text: {
                 name: {
-                    y: 820,
+                    y: 885,
                     fontSize: 72,
                     fontWeight: 'bold',
                     color: '#FFD700',
                     maxWidth: 900
                 },
                 role: {
-                    y: 920,
+                    y: 985,
                     fontSize: 42,
                     fontWeight: '600',
                     color: '#ffffff',
                     maxWidth: 900
                 },
                 quote: {
-                    y: 1000,
+                    y: 1065,
                     fontSize: 38,
                     fontWeight: '500',
                     style: 'italic',
@@ -385,8 +503,16 @@
         const quoteInput = document.getElementById('quote');
         const generateBtn = document.getElementById('generateBtn');
         const downloadBtn = document.getElementById('downloadBtn');
-        const loadDefaultBtn = document.getElementById('loadDefaultBtn');
         const statusDiv = document.getElementById('status');
+        const photoControls = document.getElementById('photoControls');
+        const zoomSlider = document.getElementById('zoomSlider');
+        const posXSlider = document.getElementById('posXSlider');
+        const posYSlider = document.getElementById('posYSlider');
+        const zoomValue = document.getElementById('zoomValue');
+        const posXValue = document.getElementById('posXValue');
+        const posYValue = document.getElementById('posYValue');
+        const loadDefaultBtn = document.getElementById('loadDefaultBtn');
+        const resetPhotoBtn = document.getElementById('resetPhotoBtn');
 
         // State
         let baseImage = null;
@@ -403,17 +529,17 @@
         // Create base template image
         function createBaseImage() {
             const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = CONFIG.canvasSize;
-            tempCanvas.height = CONFIG.canvasSize;
+            tempCanvas.width = CONFIG.canvasWidth;
+            tempCanvas.height = CONFIG.canvasHeight;
             const tempCtx = tempCanvas.getContext('2d');
 
             // Gradient background
-            const gradient = tempCtx.createLinearGradient(0, 0, CONFIG.canvasSize, CONFIG.canvasSize);
+            const gradient = tempCtx.createLinearGradient(0, 0, CONFIG.canvasWidth, CONFIG.canvasHeight);
             gradient.addColorStop(0, '#667eea');
             gradient.addColorStop(0.5, '#764ba2');
             gradient.addColorStop(1, '#f093fb');
             tempCtx.fillStyle = gradient;
-            tempCtx.fillRect(0, 0, CONFIG.canvasSize, CONFIG.canvasSize);
+            tempCtx.fillRect(0, 0, CONFIG.canvasWidth, CONFIG.canvasHeight);
 
             // Decorative elements
             tempCtx.fillStyle = 'rgba(255, 255, 255, 0.1)';
@@ -422,21 +548,21 @@
             tempCtx.fill();
             
             tempCtx.beginPath();
-            tempCtx.arc(CONFIG.canvasSize - 150, CONFIG.canvasSize - 150, 300, 0, Math.PI * 2);
+            tempCtx.arc(CONFIG.canvasWidth - 150, CONFIG.canvasHeight - 150, 300, 0, Math.PI * 2);
             tempCtx.fill();
 
             // Title text
             tempCtx.fillStyle = 'rgba(255, 215, 0, 0.2)';
             tempCtx.font = 'bold 60px Georgia';
             tempCtx.textAlign = 'center';
-            tempCtx.fillText('UNIBEN AWARDS', CONFIG.canvasSize / 2, 150);
+            tempCtx.fillText('UNIBEN AWARDS', CONFIG.canvasWidth / 2, 150);
 
             baseImage = new Image();
             baseImage.crossOrigin = 'anonymous';
             baseImage.src = tempCanvas.toDataURL();
             baseImage.onload = function() {
                 drawCanvas();
-                showStatus('Template loaded successfully!', 'success');
+                showStatus('Template loaded successfully! 🎉', 'success');
             };
         }
 
@@ -488,8 +614,9 @@
                 reader.onload = function(event) {
                     userImage = new Image();
                     userImage.onload = function() {
+                        photoControls.classList.add('active');
                         drawCanvas();
-                        showStatus('Photo uploaded successfully! 📸✨', 'success');
+                        showStatus('Photo uploaded successfully! Adjust position and zoom 📸✨', 'success');
                     };
                     userImage.onerror = function() {
                         showStatus('Error loading image. Please try another file. ❌');
@@ -504,6 +631,56 @@
                 
                 reader.readAsDataURL(file);
             }
+        });
+
+        // Photo adjustment sliders
+        zoomSlider.addEventListener('input', function() {
+            CONFIG.userPhoto.zoom = parseFloat(this.value);
+            zoomValue.textContent = this.value;
+            drawCanvas();
+        });
+
+        posXSlider.addEventListener('input', function() {
+            CONFIG.userPhoto.offsetX = parseInt(this.value);
+            posXValue.textContent = this.value + 'px';
+            drawCanvas();
+        });
+
+        posYSlider.addEventListener('input', function() {
+            CONFIG.userPhoto.offsetY = parseInt(this.value);
+            posYValue.textContent = this.value + 'px';
+            drawCanvas();
+        });
+
+        // Reset photo position
+        resetPhotoBtn.addEventListener('click', function() {
+            CONFIG.userPhoto.zoom = 1;
+            CONFIG.userPhoto.offsetX = 0;
+            CONFIG.userPhoto.offsetY = 0;
+            zoomSlider.value = 1;
+            posXSlider.value = 0;
+            posYSlider.value = 0;
+            zoomValue.textContent = '1.0';
+            posXValue.textContent = '0';
+            posYValue.textContent = '0';
+            drawCanvas();
+            showStatus('Photo position reset! 🔄', 'success');
+        });
+
+        // Load default template button
+        loadDefaultBtn.addEventListener('click', function() {
+            const img = new Image();
+            img.onload = function() {
+                baseImage = img;
+                drawCanvas();
+                templateFileName.textContent = 'default-template.jpg';
+                showStatus('Default template loaded! 🎉', 'success');
+            };
+            img.onerror = function() {
+                showStatus('Could not load default template. Please upload your own template. ❌');
+                createBaseImage();
+            };
+            img.src = 'default-template.jpg';
         });
 
         // Generate button
@@ -528,39 +705,25 @@
             }
         });
 
-        // Load default template
-        loadDefaultBtn.addEventListener('click', function() {
-            baseImage = new Image();
-            baseImage.onload = function() {
-                drawCanvas();
-                showStatus('Default template loaded! 🎉', 'success');
-            };
-            baseImage.onerror = function() {
-                showStatus('Error loading template. ❌');
-                createBaseImage();
-            };
-            baseImage.src = 'default-template.jpg';
-            templateFileName.textContent = 'default-template.jpg';
-        });
-
         // Draw canvas
         function drawCanvas() {
             try {
                 // Clear canvas
-                ctx.clearRect(0, 0, CONFIG.canvasSize, CONFIG.canvasSize);
+                ctx.clearRect(0, 0, CONFIG.canvasWidth, CONFIG.canvasHeight);
 
                 // Draw base image
                 if (baseImage && baseImage.complete) {
-                    ctx.drawImage(baseImage, 0, 0, CONFIG.canvasSize, CONFIG.canvasSize);
+                    ctx.drawImage(baseImage, 0, 0, CONFIG.canvasWidth, CONFIG.canvasHeight);
                 }
 
                 // Draw user photo
                 if (userImage && userImage.complete) {
                     drawCircularImage(
                         userImage,
-                        CONFIG.userPhoto.x,
-                        CONFIG.userPhoto.y,
-                        CONFIG.userPhoto.radius
+                        CONFIG.userPhoto.x + CONFIG.userPhoto.offsetX,
+                        CONFIG.userPhoto.y + CONFIG.userPhoto.offsetY,
+                        CONFIG.userPhoto.radius,
+                        CONFIG.userPhoto.zoom
                     );
                 }
 
@@ -585,8 +748,8 @@
             }
         }
 
-        // Draw circular image
-        function drawCircularImage(img, x, y, radius) {
+        // Draw circular image with zoom and positioning
+        function drawCircularImage(img, x, y, radius, zoom) {
             ctx.save();
 
             // Border
@@ -601,11 +764,13 @@
             ctx.closePath();
             ctx.clip();
 
-            // Scale image
-            const scale = Math.max(
+            // Scale image with zoom
+            const baseScale = Math.max(
                 (radius * 2) / img.width,
                 (radius * 2) / img.height
             );
+            
+            const scale = baseScale * zoom;
 
             const scaledWidth = img.width * scale;
             const scaledHeight = img.height * scale;
@@ -650,14 +815,14 @@
                 const metrics = ctx.measureText(testLine);
 
                 if (metrics.width > config.maxWidth && i > 0) {
-                    ctx.fillText(line, CONFIG.canvasSize / 2, y);
+                    ctx.fillText(line, CONFIG.canvasWidth / 2, y);
                     line = words[i] + ' ';
                     y += lineHeight;
                 } else {
                     line = testLine;
                 }
             }
-            ctx.fillText(line, CONFIG.canvasSize / 2, y);
+            ctx.fillText(line, CONFIG.canvasWidth / 2, y);
 
             ctx.restore();
         }
